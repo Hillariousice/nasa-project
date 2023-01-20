@@ -1,4 +1,6 @@
-const launches = new Map()
+const launches =require('./launchesMongo')
+
+// const launches = new Map()
 
 
 let latestFlightNumber = 100
@@ -17,6 +19,11 @@ const launch = {
 
 launches.set(launch.flightNumber,launch)
 
+function existsLaunchWithId(launchId){
+    return launches.has(launchId)
+
+}
+
 function addNewLaunch(launch){
     latestFlightNumber++;
     launches.set(latestFlightNumber,Object.assign(launch,{
@@ -27,7 +34,16 @@ function addNewLaunch(launch){
   }))
 }
 
+function abortLaunchById(launchId){
+   const aborted = launches.get(launchId)
+aborted.upcoming =false
+aborted.success=false
+return aborted
+}
+
 module.exports ={
     launches,
-    addNewLaunch
+    addNewLaunch,
+    existsLaunchWithId,
+    abortLaunchById
 }

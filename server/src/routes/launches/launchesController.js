@@ -1,4 +1,4 @@
-const {launches, addNewLaunch }= require('../../models/launchesModel')
+const {launches, addNewLaunch,existsLaunchWithId,abortLaunchById }= require('../../models/launchesModel')
 
 
 function httpGetAllLaunches(req,res){
@@ -8,14 +8,39 @@ function httpGetAllLaunches(req,res){
     }
 }
 
-function httpAddNewLaunches(req,res){
+function httpAddNewLaunch(req,res){
 const launch = req.body
+
+if(!launch.mission||!launch.rocket||!launch.launchDate||!launch.destination){
+return res.status(400).json({
+    error:'Mission required launch property'
+})
+}
 launch.launchDate = new Date(launch.launchDate)
-    addNewLaunch(launch)
-    res.status(201)
+if(isNaN(launch.launchDate)){
+    return res.status(400).json({
+        error:'Invalid launch date'
+    })
+}
+addNewLaunch(launch)
+   console.log(addNewLaunch(launch))
+     return res.status(201).json(launch)
+}
+
+
+function httpAbortLaunch(req,res){
+    const launchId = +req.params.id
+ if(!existsLaunchWithId(launchId)){
+    return res.status(400).json({
+        error:'Launch not found'
+    })
+ }
+ const aborted = abortLaunchById(launchId)
+    return res.status(201).json(aborted)
 }
 
 module.exports = {
     httpGetAllLaunches,
-    httpAddNewLaunches
+    httpAddNewLaunch,
+    httpAbortLaunch
 }
