@@ -27,9 +27,9 @@ function loadPlanetsData(){
         reject(err)
     })
     .on('end', async()=>{
-        console.log(habitablePlanets.map((planet)=>{
-            return planet['kepler_name']
-        }))
+        // console.log(habitablePlanets.map((planet)=>{
+        //     return planet['kepler_name']
+        // }))
         const countPlanetsFound = (await getAllPlanets()).length
         console.log(`${countPlanetsFound} habitable planets found!`)
         resolve()
@@ -38,7 +38,7 @@ function loadPlanetsData(){
    }) 
 }
  async function getAllPlanets(){
-    return await planets.find({})
+    return await planets.find({},{'__v':0,'_id':0})
 }
 
 

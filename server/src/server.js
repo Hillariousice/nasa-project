@@ -1,28 +1,23 @@
-const mongoose = require('mongoose')
+const {mongoConnect} = require('./services/mongo')
 const http =require('http')
+const path = require('path')
+ require('dotenv').config()
 
 const app = require('./app')
 const {loadPlanetsData} = require('./models/planetsModel')
+const {loadLaunchData}=require('./models/launchesModel')
 
 const PORT = process.env.PORT || 8000
 
-mongoose.connection.once('open',()=>{
-    console.log('MongoDB connection ready!')
-})
 
-mongoose.connection.on('error',(err)=>{
-    console.error(err)
-})
 
 async function startServer(){
-   await mongoose.connect(MONGO_URL,{
-    useNewUrlParser:true,
-    useUnifiedTopology:true,
-   })
+   await mongoConnect()
     await loadPlanetsData()
+    await loadLaunchData()
 } 
 
-const MONGO_URL ="mongodb+srv://hillarygreen:hillarygreen25@nasacluster.w9uz9hn.mongodb.net/nasa?retryWrites=true&w=majority"
+
 const server = http.createServer(app)
 
 server.listen(PORT,()=>{
